@@ -1,0 +1,1556 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#111111" />
+  <title>Check List Dagangan dan Menu v5 - Auto Save</title>
+  <style>
+    :root{
+      --bg:#0d0d0d;
+      --panel:#171717;
+      --panel2:#202020;
+      --border:#343434;
+      --text:#f6f6f6;
+      --muted:#a9a9a9;
+      --orange:#ff7a00;
+      --orange2:#ff9d3d;
+      --danger:#ff4d4f;
+      --ok:#46c56f;
+      --warn:#ffc145;
+      --info:#58a6ff;
+      --shadow:0 12px 30px rgba(0,0,0,.24);
+      --radius:18px;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      background:
+        radial-gradient(circle at top right, rgba(255,122,0,.12), transparent 28%),
+        var(--bg);
+      color:var(--text);
+      min-height:100vh;
+    }
+    button,input,textarea,select{font:inherit}
+    button{cursor:pointer}
+    .app{
+      max-width:1180px;
+      margin:auto;
+      padding:18px;
+    }
+    .topbar{
+      position:sticky;
+      top:0;
+      z-index:20;
+      margin:-18px -18px 18px;
+      padding:14px 18px;
+      background:rgba(13,13,13,.94);
+      backdrop-filter:blur(12px);
+      border-bottom:1px solid rgba(255,255,255,.06);
+    }
+    .topbar-inner{
+      max-width:1180px;
+      margin:auto;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:14px;
+    }
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      min-width:0;
+    }
+    .logo{
+      width:44px;height:44px;
+      border-radius:14px;
+      display:grid;place-items:center;
+      background:linear-gradient(135deg,var(--orange),#ffae52);
+      color:#101010;
+      font-weight:900;
+      box-shadow:0 8px 24px rgba(255,122,0,.25);
+      flex:0 0 auto;
+    }
+    .brand h1{
+      margin:0;
+      font-size:20px;
+      line-height:1.15;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .brand small{color:var(--muted)}
+    .top-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+    .btn{
+      border:1px solid var(--border);
+      background:#242424;
+      color:#fff;
+      padding:10px 14px;
+      border-radius:12px;
+      font-weight:750;
+      transition:.18s ease;
+    }
+    .btn:hover{transform:translateY(-1px);border-color:#505050}
+    .btn-primary{
+      background:linear-gradient(135deg,var(--orange),#ff9936);
+      color:#111;
+      border-color:transparent;
+    }
+    .btn-danger{background:#34191b;border-color:#5a2327;color:#ffb8bb}
+    .btn-ghost{background:transparent}
+    .btn-small{padding:7px 10px;border-radius:10px;font-size:13px}
+    .grid{
+      display:grid;
+      grid-template-columns: minmax(0,1fr) 350px;
+      gap:18px;
+      align-items:start;
+    }
+    .card{
+      background:linear-gradient(180deg,var(--panel),#131313);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+    .card-head{
+      padding:16px 17px;
+      border-bottom:1px solid var(--border);
+      display:flex;
+      gap:12px;
+      align-items:center;
+      justify-content:space-between;
+    }
+    .card-head h2{margin:0;font-size:17px}
+    .card-body{padding:16px}
+    .summary{
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:10px;
+      margin-bottom:16px;
+    }
+    .summary-item{
+      background:#151515;
+      border:1px solid var(--border);
+      border-radius:14px;
+      padding:12px;
+      text-align:center;
+    }
+    .summary-item strong{display:block;font-size:22px;margin-bottom:3px}
+    .summary-item span{font-size:12px;color:var(--muted)}
+    .summary-item.kosong strong{color:#ff777b}
+    .summary-item.sedikit strong{color:#ffd165}
+    .summary-item.cukup strong{color:#75b7ff}
+    .summary-item.banyak strong{color:#65d889}
+
+    .menu-list{display:flex;flex-direction:column;gap:12px}
+    .menu-card{
+      border:1px solid var(--border);
+      border-radius:16px;
+      overflow:hidden;
+      background:#121212;
+    }
+    .menu-title{
+      padding:13px 14px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      background:#1b1b1b;
+      border-bottom:1px solid var(--border);
+    }
+    .menu-title-left{min-width:0}
+    .menu-title h3{margin:0;font-size:16px;color:#fff}
+    .menu-title p{
+      margin:4px 0 0;
+      color:var(--muted);
+      font-size:12px;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .menu-actions{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+    .ingredient-list{display:flex;flex-direction:column}
+    .ingredient-row{
+      display:grid;
+      grid-template-columns:minmax(130px,1fr) auto;
+      align-items:center;
+      gap:12px;
+      padding:12px 14px;
+      border-top:1px solid #272727;
+    }
+    .ingredient-row:first-child{border-top:0}
+    .ingredient-info{min-width:0}
+    .ingredient-info strong{
+      display:block;
+      font-size:14px;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .ingredient-info small{
+      display:block;
+      margin-top:3px;
+      color:var(--muted);
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      max-width:520px;
+    }
+    .status-wrap{
+      display:flex;
+      gap:6px;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+    }
+    .status-btn{
+      border:1px solid #3b3b3b;
+      background:#202020;
+      color:#ddd;
+      padding:7px 9px;
+      border-radius:10px;
+      font-size:12px;
+      font-weight:850;
+    }
+    .status-btn.active[data-status="Sedikit"]{background:#5a470f;border-color:#8b6d16;color:#ffe295}
+    .status-btn.active[data-status="Cukup"]{background:#153a5d;border-color:#245d8e;color:#b9dcff}
+    .status-btn.active[data-status="Banyak"]{background:#163e26;border-color:#287040;color:#baf1ca}
+    .status-btn.active[data-status="Kosong"]{background:#552126;border-color:#8a3038;color:#ffc0c3}
+    .empty{
+      padding:28px 16px;
+      text-align:center;
+      color:var(--muted);
+    }
+
+    .side{
+      position:sticky;
+      top:88px;
+      display:flex;
+      flex-direction:column;
+      gap:18px;
+    }
+    .report-box{
+      width:100%;
+      min-height:250px;
+      resize:vertical;
+      background:#0d0d0d;
+      color:#f4f4f4;
+      border:1px solid var(--border);
+      border-radius:14px;
+      padding:12px;
+      line-height:1.45;
+    }
+    .field{margin-bottom:12px}
+    .field label{
+      display:block;
+      font-size:12px;
+      font-weight:800;
+      color:#d7d7d7;
+      margin-bottom:6px;
+    }
+    .input, .select, .textarea{
+      width:100%;
+      border:1px solid var(--border);
+      background:#0f0f0f;
+      color:#fff;
+      border-radius:12px;
+      padding:11px 12px;
+      outline:none;
+    }
+    .input:focus,.select:focus,.textarea:focus{border-color:var(--orange)}
+    .textarea{min-height:90px;resize:vertical}
+    .stack{display:flex;flex-direction:column;gap:8px}
+    .two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .tip{
+      background:#21170e;
+      border:1px solid #593819;
+      color:#ffd4a8;
+      padding:10px 11px;
+      border-radius:12px;
+      font-size:12px;
+      line-height:1.45;
+    }
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      padding:5px 8px;
+      border-radius:999px;
+      font-size:11px;
+      font-weight:850;
+      background:#222;
+      border:1px solid var(--border);
+      color:#ddd;
+    }
+    .badge.orange{color:#ffc58e;border-color:#6e431b;background:#2a1b0e}
+
+    .modal{
+      position:fixed;
+      inset:0;
+      z-index:100;
+      background:rgba(0,0,0,.72);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding:18px;
+    }
+    .modal.show{display:flex}
+    .modal-box{
+      width:min(620px,100%);
+      max-height:90vh;
+      overflow:auto;
+      background:#171717;
+      border:1px solid #3b3b3b;
+      border-radius:18px;
+      box-shadow:0 24px 60px rgba(0,0,0,.45);
+    }
+    .modal-head{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+      padding:15px 16px;
+      border-bottom:1px solid var(--border);
+    }
+    .modal-head h3{margin:0}
+    .modal-body{padding:16px}
+    .x{
+      border:0;
+      background:#2a2a2a;
+      color:#fff;
+      width:34px;height:34px;
+      border-radius:10px;
+      font-size:18px;
+    }
+    .footer-note{
+      margin-top:16px;
+      color:#777;
+      font-size:11px;
+      text-align:center;
+      line-height:1.5;
+    }
+
+
+
+
+    .autosave-badge{
+      display:inline-flex;
+      align-items:center;
+      gap:7px;
+      padding:6px 9px;
+      border-radius:999px;
+      font-size:11px;
+      font-weight:850;
+      border:1px solid #34563f;
+      background:#14251a;
+      color:#baf1ca;
+      white-space:nowrap;
+    }
+    .autosave-dot{
+      width:7px;height:7px;border-radius:50%;
+      background:#55d67e;
+      box-shadow:0 0 0 3px rgba(85,214,126,.12);
+    }
+    .autosave-badge.saving{
+      border-color:#6a4b1e;
+      background:#2a1d0f;
+      color:#ffd89a;
+    }
+    .autosave-badge.saving .autosave-dot{
+      background:#ffb44d;
+      box-shadow:0 0 0 3px rgba(255,180,77,.12);
+    }
+
+    .manual-section{margin-bottom:18px}
+    .manual-grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:14px;
+    }
+    .manual-box{
+      background:#121212;
+      border:1px solid var(--border);
+      border-radius:16px;
+      padding:14px;
+    }
+    .manual-box h3{
+      margin:0 0 12px;
+      font-size:15px;
+      color:#fff;
+    }
+    .manual-help{
+      color:var(--muted);
+      font-size:11px;
+      line-height:1.45;
+      margin-top:8px;
+    }
+
+    .history-section{margin-top:18px}
+    .history-list{display:flex;flex-direction:column;gap:10px}
+    .history-item{
+      display:grid;
+      grid-template-columns:minmax(150px,1fr) auto;
+      gap:12px;
+      align-items:center;
+      padding:13px 14px;
+      border:1px solid var(--border);
+      border-radius:14px;
+      background:#121212;
+    }
+    .history-main{min-width:0}
+    .history-main strong{display:block;font-size:14px}
+    .history-main small{display:block;color:var(--muted);margin-top:4px;font-size:11px}
+    .history-stats{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+    .history-actions{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+    .mini-stat{
+      padding:4px 7px;border-radius:999px;border:1px solid var(--border);
+      background:#1c1c1c;font-size:10px;font-weight:800;color:#ddd;
+    }
+    .mini-stat.kosong{color:#ff9ca0;border-color:#6b2d31}
+    .mini-stat.sedikit{color:#ffe091;border-color:#66521c}
+    .mini-stat.cukup{color:#a9d4ff;border-color:#28587e}
+    .mini-stat.banyak{color:#acf0bf;border-color:#2c6d40}
+    .history-report{
+      width:100%;min-height:390px;resize:vertical;
+      background:#0d0d0d;color:#f4f4f4;border:1px solid var(--border);
+      border-radius:14px;padding:13px;line-height:1.5;
+    }
+
+    @media(max-width:900px){
+      .grid{grid-template-columns:1fr}
+      .side{position:static}
+      .summary{grid-template-columns:repeat(2,1fr)}
+    }
+    @media(max-width:650px){
+      .app{padding:12px}
+      .topbar{margin:-12px -12px 14px;padding:11px 12px}
+      .brand small{display:none}
+      .brand h1{font-size:16px}
+      .logo{width:38px;height:38px;border-radius:12px}
+      .top-actions .btn{padding:9px 10px;font-size:12px}
+      .ingredient-row{
+        grid-template-columns:1fr;
+        gap:8px;
+      }
+      .history-item{grid-template-columns:1fr}
+      .history-actions{justify-content:flex-start}
+      .manual-grid{grid-template-columns:1fr}
+      .status-wrap{justify-content:flex-start}
+      .menu-title{align-items:flex-start}
+      .menu-actions{max-width:145px}
+      .two{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="topbar-inner">
+        <div class="brand">
+          <div class="logo">AYA</div>
+          <div>
+            <h1>Check List Dagangan dan Menu</h1>
+            <small>Offline • Data tersimpan di perangkat</small>
+          </div>
+        </div>
+        <div class="top-actions">
+          <span class="autosave-badge" id="autosaveBadge" title="Data tersimpan otomatis di perangkat">
+            <span class="autosave-dot"></span>
+            <span id="autosaveText">Tersimpan otomatis</span>
+          </span>
+          <button class="btn btn-ghost" id="btnSettings">⚙️ Pengaturan</button>
+          <button class="btn btn-primary" id="btnAddMenu">＋ Tambah Menu</button>
+        </div>
+      </div>
+    </header>
+
+    <section class="card manual-section">
+      <div class="card-head">
+        <div>
+          <h2>Tambah Menu & Bahan Manual</h2>
+          <div style="margin-top:5px"><span class="badge orange">Bisa ditambah sendiri kapan saja</span></div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="manual-grid">
+          <div class="manual-box">
+            <h3>＋ Tambah Menu Baru</h3>
+            <div class="field">
+              <label>Nama Menu</label>
+              <input class="input" id="quickMenuName" placeholder="Contoh: Es Teler, Gado-Gado, Seblak..." />
+            </div>
+            <div class="field">
+              <label>Keterangan Menu</label>
+              <textarea class="textarea" id="quickMenuNote" placeholder="Contoh: Checklist bahan untuk menu Es Teler"></textarea>
+            </div>
+            <button class="btn btn-primary" id="btnQuickAddMenu" style="width:100%">＋ Tambahkan Menu</button>
+            <div class="manual-help">Setelah menu dibuat, menu akan langsung muncul di checklist dan bisa diberi bahan.</div>
+          </div>
+
+          <div class="manual-box">
+            <h3>＋ Tambah Bahan ke Menu</h3>
+            <div class="field">
+              <label>Pilih Menu</label>
+              <select class="select" id="quickIngredientMenu"></select>
+            </div>
+            <div class="field">
+              <label>Nama Bahan / Barang</label>
+              <input class="input" id="quickIngredientName" placeholder="Contoh: Es Batu, Santan, Cup, Gula..." />
+            </div>
+            <div class="field">
+              <label>Keterangan Bahan</label>
+              <textarea class="textarea" id="quickIngredientNote" placeholder="Contoh: Santan siap pakai / Cup ukuran 16 oz"></textarea>
+            </div>
+            <div class="field">
+              <label>Status Awal</label>
+              <select class="select" id="quickIngredientStatus">
+                <option value="Cukup">Cukup</option>
+                <option value="Sedikit">Sedikit</option>
+                <option value="Banyak">Banyak</option>
+                <option value="Kosong">Kosong</option>
+              </select>
+            </div>
+            <button class="btn btn-primary" id="btnQuickAddIngredient" style="width:100%">＋ Tambahkan Bahan</button>
+            <div class="manual-help">Bahan akan langsung masuk ke menu yang dipilih dan bisa diubah statusnya setiap hari.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="grid">
+      <main>
+        <div class="card">
+          <div class="card-head">
+            <div>
+              <h2>Checklist Bahan Hari Ini</h2>
+              <div style="margin-top:5px">
+                <span class="badge orange" id="todayLabel"></span>
+              </div>
+            </div>
+            <button class="btn btn-small" id="btnResetStatus">Reset Status</button>
+          </div>
+          <div class="card-body">
+            <div class="summary">
+              <div class="summary-item sedikit"><strong id="sumSedikit">0</strong><span>Sedikit</span></div>
+              <div class="summary-item cukup"><strong id="sumCukup">0</strong><span>Cukup</span></div>
+              <div class="summary-item banyak"><strong id="sumBanyak">0</strong><span>Banyak</span></div>
+              <div class="summary-item kosong"><strong id="sumKosong">0</strong><span>Kosong</span></div>
+            </div>
+            <div id="menuList" class="menu-list"></div>
+          </div>
+        </div>
+      </main>
+
+      <aside class="side">
+        <section class="card">
+          <div class="card-head">
+            <h2>Laporan ke Dapur</h2>
+          </div>
+          <div class="card-body">
+            <div class="field">
+              <label>Filter laporan</label>
+              <select class="select" id="reportFilter">
+                <option value="all">Semua bahan</option>
+                <option value="need">Hanya Sedikit & Kosong</option>
+                <option value="empty">Hanya Kosong</option>
+              </select>
+            </div>
+            <textarea class="report-box" id="reportText" readonly></textarea>
+            <div class="stack" style="margin-top:10px">
+              <button class="btn btn-primary" id="btnWhatsapp">📲 Kirim ke Group WhatsApp</button>
+              <button class="btn" id="btnSaveDaily">💾 Simpan Laporan Hari Ini</button>
+              <button class="btn" id="btnCopy">📋 Salin Laporan</button>
+            </div>
+            <div class="tip" style="margin-top:10px">
+              Riwayat disimpan per tanggal. Jika disimpan lagi pada hari yang sama, laporan hari tersebut diperbarui dan tidak dibuat ganda.
+            </div>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="card-head"><h2>Data Lokal</h2></div>
+          <div class="card-body">
+            <div class="two">
+              <button class="btn" id="btnExport">Ekspor Data</button>
+              <button class="btn" id="btnImport">Impor Data</button>
+            </div>
+            <input type="file" id="importFile" accept="application/json" hidden />
+            <div class="footer-note">Gunakan ekspor sebagai cadangan sebelum menghapus data browser/perangkat.</div>
+          </div>
+        </section>
+      </aside>
+    </div>
+
+    <section class="card history-section">
+      <div class="card-head">
+        <div>
+          <h2>Riwayat Laporan Harian</h2>
+          <div style="margin-top:5px"><span class="badge" id="historyCount">0 hari tersimpan</span></div>
+        </div>
+        <button class="btn btn-small btn-danger" id="btnClearHistory">Hapus Semua Riwayat</button>
+      </div>
+      <div class="card-body">
+        <div id="historyList" class="history-list"></div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Modal Riwayat -->
+  <div class="modal" id="historyModal">
+    <div class="modal-box">
+      <div class="modal-head">
+        <div>
+          <h3 id="historyModalTitle">Riwayat Laporan</h3>
+          <div class="footer-note" id="historyModalMeta" style="text-align:left;margin-top:4px"></div>
+        </div>
+        <button class="x" data-close="historyModal">×</button>
+      </div>
+      <div class="modal-body">
+        <textarea class="history-report" id="historyReportText" readonly></textarea>
+        <div class="two" style="margin-top:10px">
+          <button class="btn" id="btnCopyHistory">📋 Salin</button>
+          <button class="btn btn-primary" id="btnWhatsappHistory">📲 WhatsApp</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Menu -->
+  <div class="modal" id="menuModal">
+    <div class="modal-box">
+      <div class="modal-head">
+        <h3 id="menuModalTitle">Tambah Menu</h3>
+        <button class="x" data-close="menuModal">×</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="editMenuId" />
+        <div class="field">
+          <label>Nama Menu / Produk</label>
+          <input class="input" id="menuName" placeholder="Contoh: Es Dawet" />
+        </div>
+        <div class="field">
+          <label>Keterangan Menu</label>
+          <textarea class="textarea" id="menuNote" placeholder="Contoh: Minuman dawet santan dan gula merah"></textarea>
+        </div>
+        <button class="btn btn-primary" id="saveMenu" style="width:100%">Simpan Menu</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Ingredient -->
+  <div class="modal" id="ingredientModal">
+    <div class="modal-box">
+      <div class="modal-head">
+        <h3 id="ingredientModalTitle">Tambah Bahan</h3>
+        <button class="x" data-close="ingredientModal">×</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="ingredientMenuId" />
+        <input type="hidden" id="editIngredientId" />
+        <div class="field">
+          <label>Nama Bahan / Barang</label>
+          <input class="input" id="ingredientName" placeholder="Contoh: Cendol" />
+        </div>
+        <div class="field">
+          <label>Keterangan</label>
+          <textarea class="textarea" id="ingredientNote" placeholder="Contoh: Cendol hijau untuk Es Dawet"></textarea>
+        </div>
+        <button class="btn btn-primary" id="saveIngredient" style="width:100%">Simpan Bahan</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Settings -->
+  <div class="modal" id="settingsModal">
+    <div class="modal-box">
+      <div class="modal-head">
+        <h3>Pengaturan</h3>
+        <button class="x" data-close="settingsModal">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="field">
+          <label>Nama Usaha</label>
+          <input class="input" id="businessName" placeholder="AYA SEBLAK DAN ANGKRINGAN" />
+        </div>
+        <div class="field">
+          <label>Nama Bagian Tujuan</label>
+          <input class="input" id="destinationName" placeholder="Dapur" />
+        </div>
+        <div class="field">
+          <label>Tujuan WhatsApp</label>
+          <select class="select" id="destinationType">
+            <option value="group">Group WhatsApp</option>
+            <option value="personal">Nomor WhatsApp Pribadi</option>
+          </select>
+        </div>
+        <div class="field" id="groupNameField">
+          <label>Nama Group WhatsApp</label>
+          <input class="input" id="whatsappGroupName" placeholder="Contoh: Group Dapur AYA" />
+          <div class="footer-note" style="text-align:left;margin-top:5px">
+            Nama group hanya untuk penanda laporan. Saat WhatsApp terbuka, pilih group ini dari daftar chat.
+          </div>
+        </div>
+        <div class="field" id="personalNumberField" style="display:none">
+          <label>Nomor WhatsApp Tujuan</label>
+          <input class="input" id="whatsappNumber" inputmode="numeric" placeholder="628xxxxxxxxxx" />
+          <div class="footer-note" style="text-align:left;margin-top:5px">Gunakan format internasional tanpa tanda +, contoh 6285136798499.</div>
+        </div>
+        <div class="tip" style="margin-bottom:12px">
+          Untuk Group WhatsApp, browser tidak dapat memilih group dan menekan Kirim secara otomatis. Aplikasi akan membuka WhatsApp dengan laporan sudah terisi; Anda tinggal memilih group tujuan lalu tekan Kirim.
+        </div>
+        <button class="btn btn-primary" id="saveSettings" style="width:100%">Simpan Pengaturan</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+(() => {
+  const STORAGE_KEY = "aya_checklist_dagangan_v1";
+  const DRAFT_KEY = "aya_checklist_dagangan_draft_v1";
+  const STATUS_LIST = ["Sedikit","Cukup","Banyak","Kosong"];
+
+  const uid = (p="id") => p + "_" + Date.now().toString(36) + "_" + Math.random().toString(36).slice(2,7);
+
+  const defaultData = {
+    settings: {
+      businessName: "AYA SEBLAK DAN ANGKRINGAN",
+      destinationName: "Dapur",
+      destinationType: "group",
+      whatsappNumber: "",
+      whatsappGroupName: "Group Dapur AYA"
+    },
+    history: [],
+    menus: [
+      {
+        id: uid("menu"),
+        name: "Es Dawet",
+        note: "Checklist bahan untuk membuat Es Dawet",
+        ingredients: [
+          {id:uid("item"),name:"Es Batu",note:"Stok es batu untuk minuman",status:"Cukup"},
+          {id:uid("item"),name:"Cendol",note:"Cendol untuk Es Dawet",status:"Cukup"},
+          {id:uid("item"),name:"Santan",note:"Santan siap pakai",status:"Cukup"},
+          {id:uid("item"),name:"Cup Dawet",note:"Cup kemasan Es Dawet",status:"Cukup"}
+        ]
+      },
+      {
+        id: uid("menu"),
+        name: "Seblak",
+        note: "Bahan utama untuk operasional Seblak",
+        ingredients: [
+          {id:uid("item"),name:"Kerupuk Seblak",note:"Kerupuk bahan utama",status:"Cukup"},
+          {id:uid("item"),name:"Bumbu Seblak",note:"Bumbu racikan",status:"Cukup"},
+          {id:uid("item"),name:"Sayur",note:"Sayuran segar",status:"Cukup"},
+          {id:uid("item"),name:"Cup / Mangkok",note:"Kemasan / penyajian",status:"Cukup"}
+        ]
+      },
+      {
+        id: uid("menu"),
+        name: "Es Teh",
+        note: "Checklist bahan Es Teh",
+        ingredients: [
+          {id:uid("item"),name:"Teh",note:"Teh seduh",status:"Cukup"},
+          {id:uid("item"),name:"Gula",note:"Gula untuk minuman",status:"Cukup"},
+          {id:uid("item"),name:"Es Batu",note:"Stok es batu",status:"Cukup"},
+          {id:uid("item"),name:"Cup",note:"Cup minuman",status:"Cukup"}
+        ]
+      }
+    ]
+  };
+
+  let data = load();
+
+  const $ = s => document.querySelector(s);
+
+  function load(){
+    try{
+      const raw = localStorage.getItem(STORAGE_KEY);
+      const parsed = raw ? JSON.parse(raw) : structuredClone(defaultData);
+      if(!Array.isArray(parsed.history)) parsed.history = [];
+      if(!parsed.settings) parsed.settings = structuredClone(defaultData.settings);
+      if(!parsed.settings.destinationType) parsed.settings.destinationType = "group";
+      if(!parsed.settings.whatsappGroupName) parsed.settings.whatsappGroupName = "Group Dapur AYA";
+      if(typeof parsed.settings.whatsappNumber !== "string") parsed.settings.whatsappNumber = "";
+      if(!Array.isArray(parsed.menus)) parsed.menus = [];
+      return parsed;
+    }catch(e){
+      return structuredClone(defaultData);
+    }
+  }
+
+  let autosaveTimer = null;
+
+  function setAutosaveStatus(state = "saved"){
+    const badge = $("#autosaveBadge");
+    const text = $("#autosaveText");
+    if(!badge || !text) return;
+
+    if(state === "saving"){
+      badge.classList.add("saving");
+      text.textContent = "Menyimpan...";
+    }else{
+      badge.classList.remove("saving");
+      const time = new Intl.DateTimeFormat("id-ID", {
+        hour:"2-digit", minute:"2-digit", second:"2-digit"
+      }).format(new Date());
+      text.textContent = `Tersimpan ${time}`;
+    }
+  }
+
+  function persist(){
+    try{
+      setAutosaveStatus("saving");
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+      setAutosaveStatus("saved");
+      return true;
+    }catch(e){
+      console.error("Gagal menyimpan data:", e);
+      const badge = $("#autosaveBadge");
+      const text = $("#autosaveText");
+      if(badge) badge.classList.add("saving");
+      if(text) text.textContent = "Gagal menyimpan";
+      return false;
+    }
+  }
+
+  function queueAutosave(){
+    clearTimeout(autosaveTimer);
+    setAutosaveStatus("saving");
+    autosaveTimer = setTimeout(() => persist(), 350);
+  }
+
+  function save(){
+    persist();
+    render();
+  }
+
+  function esc(str=""){
+    return String(str).replace(/[&<>"']/g, ch => ({
+      "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"
+    }[ch]));
+  }
+
+  function fmtDate(date = new Date()){
+    return new Intl.DateTimeFormat("id-ID", {
+      weekday:"long", day:"2-digit", month:"long", year:"numeric"
+    }).format(date);
+  }
+
+  function localDateKey(date = new Date()){
+    const y = date.getFullYear();
+    const m = String(date.getMonth()+1).padStart(2,"0");
+    const d = String(date.getDate()).padStart(2,"0");
+    return `${y}-${m}-${d}`;
+  }
+
+  function fmtTime(date = new Date()){
+    return new Intl.DateTimeFormat("id-ID", {
+      hour:"2-digit", minute:"2-digit", second:"2-digit"
+    }).format(date);
+  }
+
+  function getDraftFields(){
+    return {
+      quickMenuName: $("#quickMenuName")?.value || "",
+      quickMenuNote: $("#quickMenuNote")?.value || "",
+      quickIngredientMenu: $("#quickIngredientMenu")?.value || "",
+      quickIngredientName: $("#quickIngredientName")?.value || "",
+      quickIngredientNote: $("#quickIngredientNote")?.value || "",
+      quickIngredientStatus: $("#quickIngredientStatus")?.value || "Cukup"
+    };
+  }
+
+  function saveDraft(){
+    try{
+      localStorage.setItem(DRAFT_KEY, JSON.stringify(getDraftFields()));
+    }catch(e){}
+  }
+
+  function restoreDraft(){
+    try{
+      const raw = localStorage.getItem(DRAFT_KEY);
+      if(!raw) return;
+      const d = JSON.parse(raw);
+      if($("#quickMenuName")) $("#quickMenuName").value = d.quickMenuName || "";
+      if($("#quickMenuNote")) $("#quickMenuNote").value = d.quickMenuNote || "";
+      if($("#quickIngredientName")) $("#quickIngredientName").value = d.quickIngredientName || "";
+      if($("#quickIngredientNote")) $("#quickIngredientNote").value = d.quickIngredientNote || "";
+      if($("#quickIngredientStatus")) $("#quickIngredientStatus").value = d.quickIngredientStatus || "Cukup";
+      if($("#quickIngredientMenu") && data.menus.some(m => m.id === d.quickIngredientMenu)){
+        $("#quickIngredientMenu").value = d.quickIngredientMenu;
+      }
+    }catch(e){}
+  }
+
+  function clearMenuDraft(){
+    try{
+      const d = JSON.parse(localStorage.getItem(DRAFT_KEY) || "{}");
+      d.quickMenuName = "";
+      d.quickMenuNote = "";
+      localStorage.setItem(DRAFT_KEY, JSON.stringify(d));
+    }catch(e){}
+  }
+
+  function clearIngredientDraft(){
+    try{
+      const d = JSON.parse(localStorage.getItem(DRAFT_KEY) || "{}");
+      d.quickIngredientName = "";
+      d.quickIngredientNote = "";
+      d.quickIngredientStatus = "Cukup";
+      d.quickIngredientMenu = $("#quickIngredientMenu")?.value || "";
+      localStorage.setItem(DRAFT_KEY, JSON.stringify(d));
+    }catch(e){}
+  }
+
+  function render(){
+    $("#todayLabel").textContent = fmtDate();
+    renderMenus();
+    renderSummary();
+    renderReport();
+    renderHistory();
+    renderQuickMenuOptions();
+  }
+
+  function renderQuickMenuOptions(){
+    const select = $("#quickIngredientMenu");
+    if(!select) return;
+    const current = select.value;
+    if(!data.menus.length){
+      select.innerHTML = '<option value="">Belum ada menu</option>';
+      select.disabled = true;
+      return;
+    }
+    select.disabled = false;
+    select.innerHTML = data.menus
+      .slice()
+      .sort((a,b) => String(a.name).localeCompare(String(b.name), "id"))
+      .map(m => `<option value="${m.id}">${esc(m.name)}</option>`)
+      .join("");
+    if(data.menus.some(m => m.id === current)) select.value = current;
+  }
+
+  function renderMenus(){
+    const box = $("#menuList");
+    if(!data.menus.length){
+      box.innerHTML = '<div class="empty">Belum ada menu. Klik <b>Tambah Menu</b> untuk mulai.</div>';
+      return;
+    }
+
+    box.innerHTML = data.menus.map(menu => `
+      <article class="menu-card">
+        <div class="menu-title">
+          <div class="menu-title-left">
+            <h3>${esc(menu.name)}</h3>
+            <p>${esc(menu.note || "Tanpa keterangan")}</p>
+          </div>
+          <div class="menu-actions">
+            <button class="btn btn-small" data-action="add-item" data-menu="${menu.id}">＋ Bahan</button>
+            <button class="btn btn-small" data-action="edit-menu" data-menu="${menu.id}">Edit</button>
+            <button class="btn btn-small btn-danger" data-action="delete-menu" data-menu="${menu.id}">Hapus</button>
+          </div>
+        </div>
+        <div class="ingredient-list">
+          ${menu.ingredients.length ? menu.ingredients.map(item => `
+            <div class="ingredient-row">
+              <div class="ingredient-info">
+                <strong>${esc(item.name)}</strong>
+                <small>${esc(item.note || "Tanpa keterangan")}</small>
+                <div style="margin-top:7px;display:flex;gap:6px">
+                  <button class="btn btn-small" data-action="edit-item" data-menu="${menu.id}" data-item="${item.id}">Edit</button>
+                  <button class="btn btn-small btn-danger" data-action="delete-item" data-menu="${menu.id}" data-item="${item.id}">Hapus</button>
+                </div>
+              </div>
+              <div class="status-wrap">
+                ${STATUS_LIST.map(st => `
+                  <button class="status-btn ${item.status===st ? "active":""}" 
+                    data-action="status" data-menu="${menu.id}" data-item="${item.id}" data-status="${st}">
+                    ${st}
+                  </button>
+                `).join("")}
+              </div>
+            </div>
+          `).join("") : '<div class="empty">Belum ada bahan di menu ini.</div>'}
+        </div>
+      </article>
+    `).join("");
+  }
+
+  function allItems(){
+    return data.menus.flatMap(m => m.ingredients.map(i => ({...i, menuName:m.name})));
+  }
+
+  function renderSummary(){
+    const counts = {Sedikit:0,Cukup:0,Banyak:0,Kosong:0};
+    allItems().forEach(i => counts[i.status] = (counts[i.status]||0)+1);
+    $("#sumSedikit").textContent = counts.Sedikit;
+    $("#sumCukup").textContent = counts.Cukup;
+    $("#sumBanyak").textContent = counts.Banyak;
+    $("#sumKosong").textContent = counts.Kosong;
+  }
+
+  function getFilteredMenus(filterOverride){
+    const filter = filterOverride || $("#reportFilter").value;
+    return data.menus.map(menu => {
+      let items = menu.ingredients;
+      if(filter === "need") items = items.filter(i => i.status === "Sedikit" || i.status === "Kosong");
+      if(filter === "empty") items = items.filter(i => i.status === "Kosong");
+      return {...menu, ingredients:items};
+    }).filter(menu => menu.ingredients.length);
+  }
+
+  function buildReport(filterOverride){
+    const s = data.settings;
+    const menus = getFilteredMenus(filterOverride);
+    const lines = [];
+    lines.push(`*CHECK LIST DAGANGAN DAN MENU*`);
+    lines.push(`${s.businessName || "AYA"}`);
+    lines.push(`Tanggal: ${fmtDate()}`);
+    const targetLabel = s.destinationType === "group"
+      ? `${s.destinationName || "Dapur"} / ${s.whatsappGroupName || "Group WhatsApp"}`
+      : `${s.destinationName || "Dapur"}`;
+    lines.push(`Tujuan: ${targetLabel}`);
+    lines.push("");
+
+    if(!menus.length){
+      lines.push("Tidak ada item sesuai filter laporan.");
+      return lines.join("\n");
+    }
+
+    menus.forEach(menu => {
+      lines.push(`*${menu.name}*`);
+      menu.ingredients.forEach(item => {
+        const symbol = item.status === "Kosong" ? "❌" :
+                       item.status === "Sedikit" ? "⚠️" :
+                       item.status === "Banyak" ? "✅✅" : "✅";
+        lines.push(`${symbol} ${item.name} — ${item.status}${item.note ? ` (${item.note})` : ""}`);
+      });
+      lines.push("");
+    });
+
+    const need = allItems().filter(i => i.status === "Kosong" || i.status === "Sedikit");
+    if(need.length){
+      lines.push("*PRIORITAS DAPUR*");
+      need.forEach(i => lines.push(`- ${i.menuName}: ${i.name} = ${i.status}`));
+    } else {
+      lines.push("✅ Semua bahan dalam kondisi cukup/banyak.");
+    }
+    return lines.join("\n");
+  }
+
+  function renderReport(){
+    $("#reportText").value = buildReport();
+  }
+
+  function statusCounts(){
+    const counts = {Sedikit:0,Cukup:0,Banyak:0,Kosong:0};
+    allItems().forEach(i => counts[i.status] = (counts[i.status] || 0) + 1);
+    return counts;
+  }
+
+  function saveDailyHistory(showMessage = true){
+    const now = new Date();
+    const dateKey = localDateKey(now);
+    const counts = statusCounts();
+    const snapshot = {
+      id: "history_" + dateKey,
+      dateKey,
+      dateLabel: fmtDate(now),
+      savedAt: now.toISOString(),
+      savedTime: fmtTime(now),
+      businessName: data.settings.businessName || "AYA",
+      destinationName: data.settings.destinationName || "Dapur",
+      destinationType: data.settings.destinationType || "group",
+      whatsappGroupName: data.settings.whatsappGroupName || "Group Dapur AYA",
+      counts,
+      reportText: buildReport("all")
+    };
+
+    if(!Array.isArray(data.history)) data.history = [];
+    const existingIndex = data.history.findIndex(h => h.dateKey === dateKey);
+    if(existingIndex >= 0) data.history[existingIndex] = snapshot;
+    else data.history.push(snapshot);
+
+    data.history.sort((a,b) => String(b.dateKey).localeCompare(String(a.dateKey)));
+    persist();
+    renderHistory();
+
+    if(showMessage) alert(`Laporan ${snapshot.dateLabel} berhasil disimpan.`);
+    return snapshot;
+  }
+
+  function renderHistory(){
+    if(!Array.isArray(data.history)) data.history = [];
+    const history = [...data.history].sort((a,b) => String(b.dateKey).localeCompare(String(a.dateKey)));
+    $("#historyCount").textContent = `${history.length} hari tersimpan`;
+
+    if(!history.length){
+      $("#historyList").innerHTML = '<div class="empty">Belum ada riwayat. Klik <b>Simpan Laporan Hari Ini</b> setelah checklist selesai.</div>';
+      return;
+    }
+
+    $("#historyList").innerHTML = history.map(h => {
+      const c = h.counts || {};
+      return `
+        <div class="history-item">
+          <div class="history-main">
+            <strong>${esc(h.dateLabel || h.dateKey)}</strong>
+            <small>Terakhir disimpan ${esc(h.savedTime || "-")} • ${esc(h.businessName || "")}</small>
+            <div class="history-stats">
+              <span class="mini-stat sedikit">Sedikit ${Number(c.Sedikit||0)}</span>
+              <span class="mini-stat cukup">Cukup ${Number(c.Cukup||0)}</span>
+              <span class="mini-stat banyak">Banyak ${Number(c.Banyak||0)}</span>
+              <span class="mini-stat kosong">Kosong ${Number(c.Kosong||0)}</span>
+            </div>
+          </div>
+          <div class="history-actions">
+            <button class="btn btn-small" data-action="view-history" data-history="${h.id}">Lihat</button>
+            <button class="btn btn-small" data-action="copy-history" data-history="${h.id}">Salin</button>
+            <button class="btn btn-small btn-primary" data-action="wa-history" data-history="${h.id}">WA</button>
+            <button class="btn btn-small btn-danger" data-action="delete-history" data-history="${h.id}">Hapus</button>
+          </div>
+        </div>`;
+    }).join("");
+  }
+
+  function getHistory(id){
+    return (data.history || []).find(h => h.id === id);
+  }
+
+  let activeHistoryId = "";
+
+  function openHistory(h){
+    if(!h) return;
+    activeHistoryId = h.id;
+    $("#historyModalTitle").textContent = h.dateLabel || h.dateKey || "Riwayat Laporan";
+    const histTarget = h.destinationType === "group"
+      ? `${h.destinationName || "Dapur"} / ${h.whatsappGroupName || "Group WhatsApp"}`
+      : `${h.destinationName || "Dapur"}`;
+    $("#historyModalMeta").textContent = `Disimpan pukul ${h.savedTime || "-"} • Tujuan: ${histTarget}`;
+    $("#historyReportText").value = h.reportText || "";
+    openModal("historyModal");
+  }
+
+  async function copyText(text){
+    try{
+      await navigator.clipboard.writeText(text);
+    }catch(e){
+      const temp = document.createElement("textarea");
+      temp.value = text;
+      temp.style.position = "fixed";
+      temp.style.opacity = "0";
+      document.body.appendChild(temp);
+      temp.select();
+      document.execCommand("copy");
+      temp.remove();
+    }
+  }
+
+  function openWhatsappWithText(text){
+    const s = data.settings || {};
+    const encoded = encodeURIComponent(text);
+
+    if((s.destinationType || "group") === "group"){
+      // WhatsApp web/app will open with the message prefilled.
+      // User then selects the target group and presses Send.
+      const url = `https://wa.me/?text=${encoded}`;
+      window.open(url, "_blank", "noopener");
+      return true;
+    }
+
+    const number = (s.whatsappNumber || "").replace(/\D/g,"");
+    if(!number){
+      alert("Isi nomor WhatsApp tujuan terlebih dahulu melalui Pengaturan.");
+      openModal("settingsModal");
+      return false;
+    }
+    window.open(`https://wa.me/${number}?text=${encoded}`, "_blank", "noopener");
+    return true;
+  }
+
+  function updateWhatsappSettingsUI(){
+    const type = $("#destinationType")?.value || "group";
+    const groupField = $("#groupNameField");
+    const personalField = $("#personalNumberField");
+    if(groupField) groupField.style.display = type === "group" ? "block" : "none";
+    if(personalField) personalField.style.display = type === "personal" ? "block" : "none";
+
+    const mainBtn = $("#btnWhatsapp");
+    if(mainBtn){
+      mainBtn.textContent = type === "group"
+        ? "📲 Kirim ke Group WhatsApp"
+        : "📲 Kirim ke WhatsApp";
+    }
+  }
+
+  function openModal(id){ $("#"+id).classList.add("show"); }
+  function closeModal(id){ $("#"+id).classList.remove("show"); }
+
+  function findMenu(id){ return data.menus.find(m => m.id === id); }
+
+  document.addEventListener("click", e => {
+    const closeId = e.target.dataset.close;
+    if(closeId) closeModal(closeId);
+
+    const action = e.target.dataset.action;
+    if(!action) return;
+
+    const historyId = e.target.dataset.history;
+    if(action === "view-history"){
+      openHistory(getHistory(historyId));
+      return;
+    }
+    if(action === "copy-history"){
+      const h = getHistory(historyId);
+      if(h) copyText(h.reportText || "").then(() => alert("Riwayat laporan berhasil disalin."));
+      return;
+    }
+    if(action === "wa-history"){
+      const h = getHistory(historyId);
+      if(h) openWhatsappWithText(h.reportText || "");
+      return;
+    }
+    if(action === "delete-history"){
+      const h = getHistory(historyId);
+      if(h && confirm(`Hapus riwayat laporan ${h.dateLabel || h.dateKey}?`)){
+        data.history = data.history.filter(x => x.id !== historyId);
+        persist();
+        renderHistory();
+      }
+      return;
+    }
+
+    const menuId = e.target.dataset.menu;
+    const itemId = e.target.dataset.item;
+    const menu = findMenu(menuId);
+
+    if(action === "status"){
+      const item = menu?.ingredients.find(i => i.id === itemId);
+      if(item){
+        item.status = e.target.dataset.status;
+        save();
+      }
+    }
+
+    if(action === "add-item"){
+      $("#ingredientModalTitle").textContent = "Tambah Bahan";
+      $("#ingredientMenuId").value = menuId;
+      $("#editIngredientId").value = "";
+      $("#ingredientName").value = "";
+      $("#ingredientNote").value = "";
+      openModal("ingredientModal");
+    }
+
+    if(action === "edit-item"){
+      const item = menu?.ingredients.find(i => i.id === itemId);
+      if(!item) return;
+      $("#ingredientModalTitle").textContent = "Edit Bahan";
+      $("#ingredientMenuId").value = menuId;
+      $("#editIngredientId").value = itemId;
+      $("#ingredientName").value = item.name;
+      $("#ingredientNote").value = item.note || "";
+      openModal("ingredientModal");
+    }
+
+    if(action === "delete-item"){
+      if(!menu) return;
+      const item = menu.ingredients.find(i => i.id === itemId);
+      if(confirm(`Hapus bahan "${item?.name || ""}"?`)){
+        menu.ingredients = menu.ingredients.filter(i => i.id !== itemId);
+        save();
+      }
+    }
+
+    if(action === "edit-menu"){
+      if(!menu) return;
+      $("#menuModalTitle").textContent = "Edit Menu";
+      $("#editMenuId").value = menuId;
+      $("#menuName").value = menu.name;
+      $("#menuNote").value = menu.note || "";
+      openModal("menuModal");
+    }
+
+    if(action === "delete-menu"){
+      if(!menu) return;
+      if(confirm(`Hapus menu "${menu.name}" beserta semua bahan di dalamnya?`)){
+        data.menus = data.menus.filter(m => m.id !== menuId);
+        save();
+      }
+    }
+  });
+
+  $("#btnQuickAddMenu").addEventListener("click", () => {
+    const name = $("#quickMenuName").value.trim();
+    const note = $("#quickMenuNote").value.trim();
+
+    if(!name) return alert("Nama menu wajib diisi.");
+
+    const duplicate = data.menus.some(m => m.name.trim().toLowerCase() === name.toLowerCase());
+    if(duplicate && !confirm(`Menu "${name}" sudah ada. Tetap tambahkan menu baru dengan nama yang sama?`)) return;
+
+    const menu = {
+      id: uid("menu"),
+      name,
+      note,
+      ingredients: []
+    };
+
+    data.menus.push(menu);
+    $("#quickMenuName").value = "";
+    $("#quickMenuNote").value = "";
+    clearMenuDraft();
+    save();
+
+    $("#quickIngredientMenu").value = menu.id;
+    saveDraft();
+    $("#quickIngredientName").focus();
+  });
+
+  $("#btnQuickAddIngredient").addEventListener("click", () => {
+    const menuId = $("#quickIngredientMenu").value;
+    const name = $("#quickIngredientName").value.trim();
+    const note = $("#quickIngredientNote").value.trim();
+    const status = $("#quickIngredientStatus").value || "Cukup";
+    const menu = findMenu(menuId);
+
+    if(!menu) return alert("Pilih menu terlebih dahulu.");
+    if(!name) return alert("Nama bahan wajib diisi.");
+
+    const duplicate = menu.ingredients.some(i => i.name.trim().toLowerCase() === name.toLowerCase());
+    if(duplicate && !confirm(`Bahan "${name}" sudah ada di menu "${menu.name}". Tetap tambahkan lagi?`)) return;
+
+    menu.ingredients.push({
+      id: uid("item"),
+      name,
+      note,
+      status
+    });
+
+    $("#quickIngredientName").value = "";
+    $("#quickIngredientNote").value = "";
+    $("#quickIngredientStatus").value = "Cukup";
+    clearIngredientDraft();
+    save();
+
+    $("#quickIngredientMenu").value = menuId;
+    saveDraft();
+    $("#quickIngredientName").focus();
+  });
+
+  // Enter pada nama menu/bahan mempercepat input manual.
+  $("#quickMenuName").addEventListener("keydown", e => {
+    if(e.key === "Enter"){
+      e.preventDefault();
+      $("#btnQuickAddMenu").click();
+    }
+  });
+
+  $("#quickIngredientName").addEventListener("keydown", e => {
+    if(e.key === "Enter"){
+      e.preventDefault();
+      $("#btnQuickAddIngredient").click();
+    }
+  });
+
+  ["quickMenuName","quickMenuNote","quickIngredientName","quickIngredientNote"].forEach(id => {
+    const el = $("#" + id);
+    if(el){
+      el.addEventListener("input", () => {
+        saveDraft();
+        queueAutosave();
+      });
+    }
+  });
+
+  ["quickIngredientMenu","quickIngredientStatus"].forEach(id => {
+    const el = $("#" + id);
+    if(el){
+      el.addEventListener("change", () => {
+        saveDraft();
+        queueAutosave();
+      });
+    }
+  });
+
+  // Simpan juga saat tab/browser ditutup atau berpindah aplikasi.
+  window.addEventListener("pagehide", () => {
+    saveDraft();
+    persist();
+  });
+
+  document.addEventListener("visibilitychange", () => {
+    if(document.visibilityState === "hidden"){
+      saveDraft();
+      persist();
+    }
+  });
+
+  // Autosave berkala sebagai pengaman tambahan.
+  setInterval(() => {
+    saveDraft();
+    persist();
+  }, 15000);
+
+  $("#btnAddMenu").addEventListener("click", () => {
+    $("#menuModalTitle").textContent = "Tambah Menu";
+    $("#editMenuId").value = "";
+    $("#menuName").value = "";
+    $("#menuNote").value = "";
+    openModal("menuModal");
+  });
+
+  $("#saveMenu").addEventListener("click", () => {
+    const name = $("#menuName").value.trim();
+    const note = $("#menuNote").value.trim();
+    const id = $("#editMenuId").value;
+    if(!name) return alert("Nama menu wajib diisi.");
+
+    if(id){
+      const menu = findMenu(id);
+      menu.name = name;
+      menu.note = note;
+    }else{
+      data.menus.push({id:uid("menu"),name,note,ingredients:[]});
+    }
+    closeModal("menuModal");
+    save();
+  });
+
+  $("#saveIngredient").addEventListener("click", () => {
+    const menuId = $("#ingredientMenuId").value;
+    const editId = $("#editIngredientId").value;
+    const name = $("#ingredientName").value.trim();
+    const note = $("#ingredientNote").value.trim();
+    const menu = findMenu(menuId);
+    if(!menu) return alert("Menu tidak ditemukan.");
+    if(!name) return alert("Nama bahan wajib diisi.");
+
+    if(editId){
+      const item = menu.ingredients.find(i => i.id === editId);
+      if(item){
+        item.name = name;
+        item.note = note;
+      }
+    }else{
+      menu.ingredients.push({id:uid("item"),name,note,status:"Cukup"});
+    }
+    closeModal("ingredientModal");
+    save();
+  });
+
+  $("#btnSettings").addEventListener("click", () => {
+    $("#businessName").value = data.settings.businessName || "";
+    $("#destinationName").value = data.settings.destinationName || "";
+    $("#destinationType").value = data.settings.destinationType || "group";
+    $("#whatsappNumber").value = data.settings.whatsappNumber || "";
+    $("#whatsappGroupName").value = data.settings.whatsappGroupName || "Group Dapur AYA";
+    updateWhatsappSettingsUI();
+    openModal("settingsModal");
+  });
+
+  $("#destinationType").addEventListener("change", updateWhatsappSettingsUI);
+
+  $("#saveSettings").addEventListener("click", () => {
+    data.settings.businessName = $("#businessName").value.trim();
+    data.settings.destinationName = $("#destinationName").value.trim();
+    data.settings.destinationType = $("#destinationType").value || "group";
+    data.settings.whatsappNumber = $("#whatsappNumber").value.replace(/\D/g,"");
+    data.settings.whatsappGroupName = $("#whatsappGroupName").value.trim() || "Group Dapur AYA";
+    closeModal("settingsModal");
+    save();
+    updateWhatsappSettingsUI();
+  });
+
+  $("#reportFilter").addEventListener("change", renderReport);
+
+  $("#btnWhatsapp").addEventListener("click", () => {
+    saveDailyHistory(false);
+    openWhatsappWithText(buildReport());
+  });
+
+  $("#btnSaveDaily").addEventListener("click", () => {
+    saveDailyHistory(true);
+  });
+
+  $("#btnCopy").addEventListener("click", async () => {
+    const txt = buildReport();
+    try{
+      await navigator.clipboard.writeText(txt);
+      alert("Laporan berhasil disalin.");
+    }catch(e){
+      $("#reportText").select();
+      document.execCommand("copy");
+      alert("Laporan berhasil disalin.");
+    }
+  });
+
+  $("#btnResetStatus").addEventListener("click", () => {
+    if(confirm("Reset semua status bahan menjadi Cukup?")){
+      data.menus.forEach(m => m.ingredients.forEach(i => i.status = "Cukup"));
+      save();
+    }
+  });
+
+  $("#btnCopyHistory").addEventListener("click", async () => {
+    const h = getHistory(activeHistoryId);
+    if(!h) return;
+    await copyText(h.reportText || "");
+    alert("Riwayat laporan berhasil disalin.");
+  });
+
+  $("#btnWhatsappHistory").addEventListener("click", () => {
+    const h = getHistory(activeHistoryId);
+    if(h) openWhatsappWithText(h.reportText || "");
+  });
+
+  $("#btnClearHistory").addEventListener("click", () => {
+    if(!(data.history || []).length) return alert("Riwayat masih kosong.");
+    if(confirm("Hapus SEMUA riwayat laporan harian? Data checklist dan menu tidak akan dihapus.")){
+      data.history = [];
+      persist();
+      renderHistory();
+    }
+  });
+
+  $("#btnExport").addEventListener("click", () => {
+    const blob = new Blob([JSON.stringify(data,null,2)], {type:"application/json"});
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = `backup-checklist-aya-${new Date().toISOString().slice(0,10)}.json`;
+    a.click();
+    URL.revokeObjectURL(a.href);
+  });
+
+  $("#btnImport").addEventListener("click", () => $("#importFile").click());
+
+  $("#importFile").addEventListener("change", async e => {
+    const file = e.target.files?.[0];
+    if(!file) return;
+    try{
+      const parsed = JSON.parse(await file.text());
+      if(!parsed || !Array.isArray(parsed.menus)) throw new Error("Format tidak valid");
+      if(!Array.isArray(parsed.history)) parsed.history = [];
+      if(confirm("Impor akan mengganti data checklist dan riwayat saat ini. Lanjutkan?")){
+        data = parsed;
+        save();
+      }
+    }catch(err){
+      alert("File backup tidak valid.");
+    }
+    e.target.value = "";
+  });
+
+  document.querySelectorAll(".modal").forEach(m => {
+    m.addEventListener("click", e => {
+      if(e.target === m) m.classList.remove("show");
+    });
+  });
+
+  render();
+  updateWhatsappSettingsUI();
+  restoreDraft();
+  setAutosaveStatus("saved");
+})();
+</script>
+</body>
+</html>
